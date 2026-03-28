@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Whitelisted | WHITE ROLEPLAY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Cinzel', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        'void': '#030303',
+                        'mist': '#0a0a0a',
+                        'bone': '#e2e2e2',
+                        'fog': '#1a1a1a',
+                        'silver': '#888888',
+                        'accent': '#ffffff',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --cursor-size: 20px;
+            --cursor-hover-size: 80px;
+        }
+
+        body {
+            background-color: #030303;
+            color: #e2e2e2;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+
+        .cursor-outline.hover {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Film Grain */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 8999;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+        }
+
+        /* Form Elements */
+        .form-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-input:focus ~ .form-label,
+        .form-input:not(:placeholder-shown) ~ .form-label {
+            top: -0.6rem;
+            left: 0;
+            font-size: 0.65rem;
+            color: #fff;
+        }
+
+        .textarea-label {
+            top: 1.5rem;
+        }
+
+        .form-input:focus ~ .textarea-label,
+        .form-input:not(:placeholder-shown) ~ .textarea-label {
+            top: -0.6rem;
+            left: 0;
+        }
+
+        /* Progress Bar */
+        .progress-line {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Step Indicator */
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+            transition: all 0.4s ease;
+        }
+
+        .step-active .step-number {
+            background: white;
+            color: black;
+            border-color: white;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .step-completed .step-number {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        /* Checkbox Custom */
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox:checked {
+            background: white;
+            border-color: white;
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid black;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            position: relative;
+            overflow: hidden;
+            background: white;
+            color: black;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: black;
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+
+        .submit-btn:hover::before {
+            left: 0;
+        }
+
+        .submit-btn:hover {
+            color: white;
+            letter-spacing: 0.2em;
+        }
+
+        .submit-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+        }
+
+        /* Navigation */
+        .nav-blur {
+            background: rgba(3, 3, 3, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Overlays -->
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 py-6 px-8 md:px-16 nav-blur">
+        <div class="max-w-[1800px] mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group cursor-pointer">
+                <div class="w-8 h-[1px] bg-white group-hover:w-16 transition-all duration-500"></div>
+                <span class="font-display text-xl tracking-[0.3em] font-bold uppercase">White<span class="font-light opacity-50">RP</span></span>
+            </a>
+
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex items-center gap-3 text-[10px] uppercase tracking-widest text-silver">
+                    <div class="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                    <span>Applications Open</span>
+                </div>
+                <a href="index.html" class="magnetic-btn px-6 py-3 border border-white/20 text-[10px] uppercase tracking-[0.2em] font-medium hover:border-white hover:bg-white hover:text-black transition-all duration-500">
+                    Return
+                </a>
+            </div>
+        </div>
+   </nav>
+
+    
+   
+   <main class="pt-32 pb-24 px-8 md:px-16 min-h-screen">
+
+    <section class="relative h-screen w-full overflow-hidden flex items-center justify-center">
+    <!-- Background Layers -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-b from-void via-void/80 to-void z-10"></div>
+        <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=2564&auto=format&fit=crop" 
+             class="w-full h-full object-cover opacity-30 grayscale contrast-125 scale-110 animate-breathe">
+    </div>
+
+    <div class="relative z-20 text-center px-6 max-w-6xl mx-auto">
+        <h1 class="font-display text-7xl md:text-9xl font-black uppercase">
+            WHITELIST
+        </h1>
+
+        <p class="mt-6 text-silver">
+            Apply for access to White Roleplay
+        </p>
+    </div>
+</section>
+    
+    <!-- Main Content -->
+    <main class="pt-32 pb-24 px-8 md:px-16 min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Header -->
+            <div class="mb-16 animate-fade-in">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="h-[1px] w-12 bg-white/30"></div>
+                    <span class="text-[10px] uppercase tracking-[0.4em] text-silver">Entry Protocol</span>
+                </div>
+                <h1 class="font-display text-5xl md:text-7xl font-bold uppercase leading-none mb-6">
+                    Get <span class="text-stroke" style="-webkit-text-stroke: 1px rgba(255,255,255,0.3); color: transparent;">Whitelisted</span>
+                </h1>
+                <p class="text-silver text-sm md:text-base max-w-xl leading-relaxed">
+                    Complete the following application with diligence and honesty. Each response is reviewed manually by our admissions team. Incomplete or rushed applications are automatically rejected.
+                </p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="mb-16 animate-fade-in delay-100">
+                <div class="flex justify-between mb-4">
+                    <div class="step step-active flex items-center gap-4" data-step="1">
+                        <div class="step-number text-sm">01</div>
+                        <span class="text-[10px] uppercase tracking-[0.2em] hidden md:block">Identity</span>
+                    </div>
+                    <div class="step flex items-center gap-4" data-step="2">
+                        <div class="step-number text-sm">02</div>
+                        <span class="text-[10px] uppercase tracking-[0.2em] hidden md:block">Experience</span>
+                    </div>
+                    <div class="step flex items-center gap-4" data-step="3">
+                        <div class="step-number text-sm">03</div>
+                        <span class="text-[10px] uppercase tracking-[0.2em] hidden md:block">Character</span>
+                    </div>
+                    <div class="step flex items-center gap-4" data-step="4">
+                        <div class="step-number text-sm">04</div>
+                        <span class="text-[10px] uppercase tracking-[0.2em] hidden md:block">Verification</span>
+                    </div>
+                </div>
+                <div class="progress-line">
+                    <div class="progress-fill" id="progressBar" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <!-- Application Form -->
+            <form id="whitelistForm" class="space-y-12">
+                
+                <!-- Section 1: Identity -->
+                <div class="form-section animate-fade-in delay-200" data-section="1">
+                    <div class="flex items-baseline gap-4 mb-8">
+                        <span class="font-mono text-4xl font-bold text-white/20">01</span>
+                        <h2 class="font-display text-2xl uppercase tracking-wider">Identity Verification</h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="relative">
+                            <input type="text" name="discord" placeholder=" " required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono">
+                            <label class="form-label">Discord Username (User#0000)</label>
+                        </div>               
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="relative">
+                            <input type="text" name="steam" placeholder=" " required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono">
+                            <label class="form-label">Steam Profile URL</label>
+                        </div>
+                        <div class="relative">
+                            <input type="number" name="age" placeholder=" " required min="18"
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono">
+                            <label class="form-label">Age (Must be 16+)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Experience -->
+                    <div class="flex items-baseline gap-4 mb-8">
+                        <span class="font-mono text-4xl font-bold text-white/20">02</span>
+                        <h2 class="font-display text-2xl uppercase tracking-wider">Roleplay Experience</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="relative">
+                            <select name="experience" required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono cursor-pointer">
+                                <option value="" disabled selected class="bg-void">Select your experience level</option>
+                                <option value="none" class="bg-void">No prior experience</option>
+                                <option value="beginner" class="bg-void">Beginner (0-6 months)</option>
+                                <option value="intermediate" class="bg-void">Intermediate (6-12 months)</option>
+                                <option value="advanced" class="bg-void">Advanced (1-2 years)</option>
+                                <option value="expert" class="bg-void">Expert (2+ years)</option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <textarea name="history" rows="4" placeholder=" " required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono resize-none"></textarea>
+                            <label class="form-label textarea-label">Previous Server History </label>
+                        </div>
+
+                        <div class="relative">
+                            <textarea name="reason" rows="4" placeholder=" " required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono resize-none"></textarea>
+                            <label class="form-label textarea-label">Why do you want to join White RP specifically?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Character Concept -->
+                <div class="form-section animate-fade-in delay-400 transition-all duration-500" data-section="3">
+                    <div class="flex items-baseline gap-4 mb-8">
+                        <span class="font-mono text-4xl font-bold text-white/20">03</span>
+                        <h2 class="font-display text-2xl uppercase tracking-wider">Character Concept</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="relative">
+                                <input type="text" name="charName" placeholder=" " required
+                                    class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono">
+                                <label class="form-label">Character Full Name</label>
+                            </div>
+                            <div class="relative">
+                                <input type="text" name="charAge" placeholder=" " required
+                                    class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono">
+                                <label class="form-label">Character Age</label>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <textarea name="backstory" rows="6" placeholder=" " required maxlength="2000"
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono resize-none"></textarea>
+                            <label class="form-label textarea-label">Detailed Character Backstory (Min 200 words)</label>
+                            <div class="absolute bottom-4 right-4 text-[10px] text-silver font-mono">
+                                <span id="charCount">0</span>/2000
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <textarea name="goals" rows="4" placeholder=" " required
+                                class="form-input w-full px-6 py-4 text-sm bg-transparent text-white font-mono resize-none"></textarea>
+                            <label class="form-label textarea-label">Character Goals & Motivations</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Verification -->
+                <div class="form-section opacity-50 pointer-events-none transition-all duration-500" data-section="4">
+                    <div class="flex items-baseline gap-4 mb-8">
+                        <span class="font-mono text-4xl font-bold text-white/20">04</span>
+                        <h2 class="font-display text-2xl uppercase tracking-wider">Final Verification</h2>
+                    </div>
+
+                    <!-- Warning Box -->
+                    <div class="warning-box p-6 mb-8">
+                        <div class="flex items-start gap-4">
+                            <svg class="w-5 h-5 text-white mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <div>
+                                <h3 class="font-display text-sm uppercase tracking-wider mb-2">Important Notice</h3>
+                                <p class="text-silver text-xs leading-relaxed">
+                                    By submitting this application, you acknowledge that you have read and understood the White RP Handbook. Any false information will result in permanent blacklisting. We reserve the right to reject any application without explanation.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mb-8">
+                        <label class="flex items-start gap-4 cursor-pointer group">
+                            <input type="checkbox" required class="custom-checkbox mt-1">
+                            <span class="text-xs text-silver leading-relaxed group-hover:text-white transition-colors">
+                                I confirm that I am at least 16 years of age and agree to abide by all server rules and regulations.
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-4 cursor-pointer group">
+                            <input type="checkbox" required class="custom-checkbox mt-1">
+                            <span class="text-xs text-silver leading-relaxed group-hover:text-white transition-colors">
+                                I understand that this is a serious roleplay server and I will maintain character at all times.
+                            </span>
+                        </label>
+                        <label class="flex items-start gap-4 cursor-pointer group">
+                            <input type="checkbox" required class="custom-checkbox mt-1">
+                            <span class="text-xs text-silver leading-relaxed group-hover:text-white transition-colors">
+                                I consent to voice verification and understand that interviews are conducted via Discord.
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn w-full md:w-auto px-12 py-5 text-[11px] uppercase tracking-[0.3em] font-bold">
+                        <span>Submit Application</span>
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Success Message (Hidden by default) -->
+            <div id="successMessage" class="hidden text-center py-24">
+                <div class="w-20 h-20 mx-auto mb-8 border border-white/20 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold uppercase mb-6">Application Received</h2>
+                <p class="text-silver max-w-md mx-auto mb-8 leading-relaxed">
+                    Your request for entry has been logged. Expect a response within 48-72 hours. Check your Discord DMs for further instructions.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <div class="text-center">
+                        <div class="font-mono text-2xl font-bold mb-1" id="appId">#WRP-78432</div>
+                        <div class="text-[10px] uppercase tracking-widest text-silver">Application ID</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 px-8 md:px-16 border-t border-white/5 bg-void">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[9px] uppercase tracking-[0.3em] text-silver/50">
+                White RolePlay © 2024
+            </p>
+            <p class="text-[9px] uppercase tracking-[0.3em] text-silver/50">
+                Not affiliated with Rockstar Games
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, label');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursorOutline.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover'));
+        });
+
+        // Form Progress Logic
+        const form = document.getElementById('whitelistForm');
+        const sections = document.querySelectorAll('.form-section');
+        const progressBar = document.getElementById('progressBar');
+        const steps = document.querySelectorAll('.step');
+        let currentSection = 1;
+
+        // Character counter
+        const backstory = document.querySelector('textarea[name="backstory"]');
+        const charCount = document.getElementById('charCount');
+        
+        backstory?.addEventListener('input', (e) => {
+            charCount.textContent = e.target.value.length;
+        });
+
+        // Section validation and progression
+        function validateSection(sectionNum) {
+            const section = document.querySelector(`[data-section="${sectionNum}"]`);
+            const inputs = section.querySelectorAll('input[required], textarea[required], select[required]');
+            let valid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value) valid = false;
+                if (input.type === 'checkbox' && !input.checked) valid = false;
+            });
+
+            return valid;
+        }
+
+        function unlockSection(sectionNum) {
+            if (sectionNum > 4) return;
+            
+            const section = document.querySelector(`[data-section="${sectionNum}"]`);
+            section.classList.remove('opacity-50', 'pointer-events-none');
+            section.classList.add('animate-fade-in');
+            
+            // Update progress
+            const progress = (sectionNum / 4) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Update steps
+            steps.forEach((step, idx) => {
+                if (idx + 1 < sectionNum) {
+                    step.classList.add('step-completed');
+                    step.classList.remove('step-active');
+                    step.querySelector('.step-number').innerHTML = '✓';
+                } else if (idx + 1 === sectionNum) {
+                    step.classList.add('step-active');
+                    step.classList.remove('step-completed');
+                }
+            });
+
+            currentSection = sectionNum;
+        }
+
+        // Monitor inputs for auto-progression
+        sections.forEach((section, idx) => {
+            const inputs = section.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    if (validateSection(idx + 1) && idx + 1 === currentSection) {
+                        setTimeout(() => unlockSection(currentSection + 1), 500);
+                    }
+                });
+            });
+        });
+
+        // Form Submission
+        
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+
+    const embed = {
+        username: "WHITE RP WHITELIST",
+        avatar_url: "https://i.imgur.com/AfFp7pu.png", // 🔥 change to your server logo
+        embeds: [
+            {
+                title: "🚨 NEW WHITELIST APPLICATION",
+                color: 16777215,
+                thumbnail: {
+                    url: "https://i.imgur.com/AfFp7pu.png" // same logo
+                },
+                fields: [
+                    {
+                        name: "👤 PLAYER INFO",
+                        value:
+                        `**Discord:** ${data.get('discord') || "N/A"}\n` +
+                        `**Steam:** ${data.get('steam') || "N/A"}\n` +
+                        `**Age:** ${data.get('age') || "N/A"}`,
+                        inline: false
+                    },
+                    {
+                        name: "🎮 EXPERIENCE",
+                        value:
+                        `**Level:** ${data.get('experience') || "N/A"}\n\n` +
+                        `**History:**\n${data.get('history') || "N/A"}`,
+                        inline: false
+                    },
+                    {
+                        name: "🔥 MOTIVATION",
+                        value: data.get('reason') || "N/A",
+                        inline: false
+                    },
+                    {
+                        name: "🎭 CHARACTER",
+                        value:
+                        `**Name:** ${data.get('charName') || "N/A"}\n` +
+                        `**Age:** ${data.get('charAge') || "N/A"}`,
+                        inline: false
+                    },
+                    {
+                        name: "📖 BACKSTORY",
+                        value: (data.get('backstory') || "N/A").substring(0, 1000),
+                        inline: false
+                    },
+                    {
+                        name: "🎯 GOALS",
+                        value: data.get('goals') || "N/A",
+                        inline: false
+                    }
+                ],
+                footer: {
+                    text: "WHITE ROLEPLAY • WHITELIST SYSTEM"
+                },
+                timestamp: new Date()
+            }
+        ]
+    };
+
+    await fetch("https://discord.com/api/webhooks/1487413145671696395/eapns3UPV_56plwcltSJvB_KM_OtqEi0VRZuOlL82t0ESqalwx-kEquHNsTb1ORm0Jbl", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(embed)
+    });
+
+    // UI Success
+    form.style.display = 'none';
+    document.getElementById('successMessage').classList.remove('hidden');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+});
+
+        // Initialize first seform.addEventListener('submit', (e) => {ction
+        unlockSection(4);
+
+        // Magnetic Buttons
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+    </script>
+</body>
+</html>
